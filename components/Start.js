@@ -14,7 +14,7 @@ import {
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState('');
-  const [selectedColor, setSelectedColor] = useState();
+  const [selectedColor, setSelectedColor] = useState('');
   const [selectedColorLabel, setSelectedColorLabel] = useState();
   const colorOptions = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
   const colorLabels = ['Black', 'Purple', 'Blue', 'Green'];
@@ -57,8 +57,6 @@ const Start = ({ navigation }) => {
                   styles.colorOption,
                   { backgroundColor: color },
                   selectedColor === color && {
-                    // borderWidth: 2,
-                    // borderColor: 'red',
                     outlineWidth: 2,
                     outlineColor: color,
                     outlineOffset: 2,
@@ -73,35 +71,20 @@ const Start = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.actionsContainer}>
-          {/* <TouchableOpacity
-            style={styles.button}
-            activeOpacity={0.8}
-            onPress={() => {
-              if (name == '' || selectedColor == '') {
-                Alert.alert('Please provide a username and pick a color');
-              } else {
-                navigation.navigate('Chat', {
-                  name: name,
-                  color: selectedColor,
-                  colorLabel: selectedColorLabel,
-                })
-              }
-            }}
-          >
-            <Text style={[styles.baseText, styles.buttonText]}>
-              Start Chatting
-            </Text>
-          </TouchableOpacity> */}
           <Pressable
           onPress={() => {
-            if (name == '' || selectedColor == '') {
-              Alert.alert('Please provide a username and pick a color');
+            const missingFields = [];
+            if (!name) missingFields.push('username');
+            if (!selectedColor) missingFields.push('color');
+
+            if (missingFields.length > 0) {
+              Alert.alert(`Please provide a ${missingFields.join(' and ')}`);
             } else {
               navigation.navigate('Chat', {
-                name: name,
+                name,
                 color: selectedColor,
                 colorLabel: selectedColorLabel,
-              })
+              });
             }
           }}
           style={({pressed}) => [
