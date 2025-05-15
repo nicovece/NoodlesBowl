@@ -1,0 +1,6 @@
+module Pods_NoodlesBowl {
+  umbrella header "Pods-NoodlesBowl-umbrella.h"
+
+  export *
+  module * { export * }
+}
