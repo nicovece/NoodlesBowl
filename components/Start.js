@@ -3,13 +3,14 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   TextInput,
   ImageBackground,
   TouchableOpacity,
   Image,
   Alert,
   Pressable,
+  KeyboardAvoidingView, 
+  Platform
 } from 'react-native';
 
 const Start = ({ navigation }) => {
@@ -101,6 +102,7 @@ const Start = ({ navigation }) => {
         </Pressable>
         </View>
       </View>
+      { Platform.OS === 'ios' ? <KeyboardAvoidingView behavior="padding" /> : null }
     </ImageBackground>
   );
 };
