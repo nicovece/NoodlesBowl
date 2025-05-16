@@ -1,9 +1,21 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
-import { GiftedChat, Bubble, InputToolbar, Send, SystemMessage } from 'react-native-gifted-chat';
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  ImageBackground,
+} from 'react-native';
+import {
+  GiftedChat,
+  Bubble,
+  InputToolbar,
+  Send,
+  SystemMessage,
+} from 'react-native-gifted-chat';
 
 const Chat = ({ route, navigation }) => {
-  const { name, color, colorLabel } = route.params;
+  const { name, color, colorLabel, colorContrast } = route.params;
   const [messages, setMessages] = useState([]);
   const onSend = (newMessages) => {
     setMessages((previousMessages) =>
@@ -37,32 +49,58 @@ const Chat = ({ route, navigation }) => {
   }, []);
 
   const renderBubble = (props) => {
-    return <Bubble
-      {...props}
-      wrapperStyle={{
-        right: {
-          backgroundColor: "#000"
-        },
-        left: {
-          backgroundColor: "#FFF"
-        }
-      }}
-    />
-  }
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#000',
+          },
+          left: {
+            backgroundColor: '#FFF',
+          },
+        }}
+      />
+    );
+  };
+
+  // const customInputToolbar = (props) => {
+  //   return (
+  //     <InputToolbar
+  //       {...props}
+  //       containerStyle={{
+  //         backgroundColor: 'white',
+  //         borderTopColor: color,
+  //         borderTopWidth: 4,
+  //       }}
+  //     />
+  //   );
+  // };
 
   return (
-    <View style={[styles.container, { backgroundColor: color }]}>
-      <GiftedChat 
+    <ImageBackground
+      source={require('../assets/chat_bg-blur.webp')}
+      resizeMode='cover'
+      style={[styles.backgroundMain, { backgroundColor: color }]}
+      imageStyle={{ opacity: 0.25 }}
+      accessibile={true}
+      accessibilityLabel='Chat Container'
+    >
+      <GiftedChat
+        accessibile={true}
+        accessibilityLabel='Chat'
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
         renderBubble={renderBubble}
-        onSend={messages => onSend(messages)}
+        onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1
+          _id: 1,
         }}
       />
-      { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
-    </View>
+      {Platform.OS === 'android' ? (
+        <KeyboardAvoidingView behavior='height' />
+      ) : null}
+    </ImageBackground>
   );
 };
 
@@ -70,41 +108,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  backgroundMain: {
+    flex: 1,
+  },
 });
 
 export default Chat;
-
-// import { useEffect } from 'react';
-// import { StyleSheet, View, Text } from 'react-native';
-
-// const Chat = ({ route, navigation }) => {
-//   const { name, color, colorLabel } = route.params;
-
-//   useEffect(() => {
-//     navigation.setOptions({ title: name });
-//   }, []);
-
-//   return (
-//     <View style={[styles.container, { backgroundColor: color }]}>
-//       <View style={{ backgroundColor: '#fff' }}>
-//         <Text style={[styles.helloText, { color: color }]}>Hello {name}!</Text>
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center'
-//   },
-//   helloText: {
-//     padding: 20,
-//     fontSize: 45,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//   }
-// });
-
-// export default Chat;
