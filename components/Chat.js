@@ -64,6 +64,22 @@ const Chat = ({ route, navigation }) => {
     );
   };
 
+  const renderSystemMessage = (props) => {
+    return (
+      <SystemMessage
+        {...props}
+        containerStyle={[
+          styles.systemMessageContainer,
+          { backgroundColor: color }
+        ]}
+        textStyle={[
+          styles.systemMessageText,
+          { color: colorContrast }
+        ]}
+      />
+    );
+  };
+
   // const customInputToolbar = (props) => {
   //   return (
   //     <InputToolbar
@@ -92,6 +108,7 @@ const Chat = ({ route, navigation }) => {
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
         renderBubble={renderBubble}
+        renderSystemMessage={renderSystemMessage}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
@@ -110,6 +127,22 @@ const styles = StyleSheet.create({
   },
   backgroundMain: {
     flex: 1,
+  },
+  systemMessageContainer: {
+    alignItems: 'center',
+    marginVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    // backgroundColor: '#f0f0f0',
+    borderRadius: 12,
+    alignSelf: 'center',
+    maxWidth: '80%',
+  },
+  systemMessageText: {
+    // color: '#888',
+    // fontStyle: 'italic',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
 
