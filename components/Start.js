@@ -3,41 +3,81 @@ import {
   StyleSheet,
   View,
   Text,
-  Button,
   TextInput,
   ImageBackground,
   TouchableOpacity,
   Image,
   Alert,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#F1E420');
+  const [selectedColorContrast, setSelectedColorContrast] = useState('#000');
   const [selectedColorLabel, setSelectedColorLabel] = useState();
-  const colorOptions = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
-  const colorLabels = ['Black', 'Purple', 'Blue', 'Green'];
+  const colorOptions = ['#F1E420', '#302E06', '#2097F1', '#7B20F1', '#F17B20'];
+  const colorOptionContrast = ['#000', '#fff', '#000', '#fff', '#000'];
+  const colorLabels = ['Light', 'Yellow', 'Brown', 'Blue', 'Purple', 'Orange'];
 
   return (
     <ImageBackground
-      source={require('../assets/noodlesbowl_bg.png')}
+      source={require('../assets/noodlesbowl_bg.webp')}
       resizeMode='cover'
-      style={[styles.backgroundMain, { backgroundColor: '#090C08' }]}
-      imageStyle={{ opacity: 0.5 }}
+      style={[styles.backgroundMain, { backgroundColor: selectedColor }]}
+      imageStyle={{ opacity: 0.15 }}
     >
-      <View style={styles.introContainer}>
-        <Text style={styles.title}>NoodlesBowl</Text>
-        <Text style={styles.subtitle}>Chat</Text>
-        <Text style={styles.tagline}>The tastiest way to connect</Text>
+      <View
+        accessibile={true}
+        accessibilityLabel='Intro Container'
+        style={styles.introContainer}
+      >
+        <Text
+          accessibilityLabel='Title'
+          style={[
+            styles.title,
+            { color: selectedColorContrast },
+          ]}
+        >
+          NoodlesBowl
+        </Text>
+        <Text
+          accessibilityLabel='Subtitle'
+          style={[
+            styles.subtitle,
+            { color: selectedColorContrast },
+          ]}
+        >
+          Chat
+        </Text>
+        <Text
+          accessibilityLabel='Tagline'
+          style={[
+            styles.tagline,
+            { color: selectedColorContrast },
+          ]}
+        >
+          The tastiest way to connect
+        </Text>
       </View>
-      <View style={styles.bodyContainer}>
-        <View style={styles.textInputContainer}>
+      <View
+        accessibile={true}
+        accessibilityLabel='Body Container'
+        style={styles.bodyContainer}
+      >
+        <View
+          accessibile={true}
+          accessibilityLabel='Text Input Container'
+          style={styles.textInputContainer}
+        >
           <Image
             source={require('../assets/input_icon.png')}
             style={styles.textInputBackground}
           />
           <TextInput
+            accessibilityLabel='Username Text Input'
             style={[styles.textInput, styles.baseText]}
             value={name}
             onChangeText={setName}
@@ -45,12 +85,16 @@ const Start = ({ navigation }) => {
           />
         </View>
         <View style={styles.colorPickerContainer}>
-          <Text style={[styles.baseText, styles.colorPickerLabel]}>
+          <Text
+            accessibilityLabel='Color Picker Label'
+            style={[styles.baseText, styles.colorPickerLabel]}
+          >
             Choose Background Color:
           </Text>
-          <View style={styles.colorPicker}>
+          <View accessibilityLabel='Color Picker' style={styles.colorPicker}>
             {colorOptions.map((color, index) => (
               <TouchableOpacity
+                accessibilityLabel={`Color Option ${colorLabels[index]}`}
                 key={`color__option-${index}`}
                 activeOpacity={0.8}
                 style={[
@@ -65,42 +109,65 @@ const Start = ({ navigation }) => {
                 onPress={() => {
                   setSelectedColor(color);
                   setSelectedColorLabel(colorLabels[index]);
+                  setSelectedColorContrast(colorOptionContrast[index]);
                 }}
               ></TouchableOpacity>
             ))}
           </View>
         </View>
-        <View style={styles.actionsContainer}>
+        <View
+          accessibile={true}
+          accessibilityLabel='Actions Container'
+          style={styles.actionsContainer}
+        >
           <Pressable
-          onPress={() => {
-            const missingFields = [];
-            if (!name) missingFields.push('username');
-            if (!selectedColor) missingFields.push('color');
+            accessibilityLabel='Start Chatting Button'
+            onPress={() => {
+              const missingFields = [];
+              if (!name) missingFields.push('username');
+              if (!selectedColor) missingFields.push('color');
 
-            if (missingFields.length > 0) {
-              Alert.alert(`Please provide a ${missingFields.join(' and ')}`);
-            } else {
-              navigation.navigate('Chat', {
-                name,
-                color: selectedColor,
-                colorLabel: selectedColorLabel,
-              });
-            }
-          }}
-          style={({pressed}) => [
-            {
-              backgroundColor: pressed ? '#2F2D34' : '#757083',
-            },
-            styles.button,
-          ]}>
-          {({pressed}) => (
-            <Text style={[styles.baseText, styles.buttonText]}>
-              Start Chatting
-            </Text>
-          )}
-        </Pressable>
+              if (missingFields.length > 0) {
+                Alert.alert(`Please provide a ${missingFields.join(' and ')}`);
+              } else {
+                navigation.navigate('Chat', {
+                  name,
+                  color: selectedColor,
+                  colorLabel: selectedColorLabel,
+                  colorContrast: selectedColorContrast,
+                });
+              }
+            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? selectedColorContrast : selectedColor,
+              },
+              {
+                borderColor: selectedColor,
+              },
+              styles.button,
+              { color: selectedColorContrast },
+            ]}
+          >
+            {({ pressed }) => (
+              <Text
+                accessibilityLabel='Start Chatting Button Text'
+                // style={[styles.baseText, styles.buttonText, { color: selectedColorContrast }]}
+                style={[
+                  styles.baseText,
+                  styles.buttonText,
+                  { color: pressed ? selectedColor : selectedColorContrast }
+                ]}
+              >
+                Start Chatting
+              </Text>
+            )}
+          </Pressable>
         </View>
       </View>
+      {Platform.OS === 'ios' ? (
+        <KeyboardAvoidingView behavior='padding' />
+      ) : null}
     </ImageBackground>
   );
 };
@@ -195,7 +262,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: '6%',
-    borderWidth: 1,
   },
   button: {
     width: '100%',
@@ -203,9 +269,10 @@ const styles = StyleSheet.create({
     // backgroundColor: '#757083',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 4,
   },
   buttonText: {
-    color: '#ffffff',
     fontWeight: '600',
   },
 });
