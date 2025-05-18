@@ -29,7 +29,7 @@ const Start = ({ navigation }) => {
   //   signInAnonymously(auth)
   //     .then((result) => {
   //       navigation.navigate('Chat', {
-  //         userID: result.user.uid,
+  //         uid: result.user.uid,
   //         name,
   //         color: selectedColor,
   //         colorLabel: selectedColorLabel,
@@ -45,6 +45,7 @@ const Start = ({ navigation }) => {
     signInAnonymously(auth)
       .then((result) => {
         navigation.navigate('Chat', {
+          uid: result.user.uid,
           name,
           color: selectedColor,
           colorLabel: selectedColorLabel,
