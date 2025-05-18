@@ -59,6 +59,11 @@ const Start = ({ navigation }) => {
       });
   };
 
+  // fetch('https://jsonplaceholder.typicode.com/todos/1')
+  //   .then(response => response.json())
+  //   .then(json => console.log('Network test:', json))
+  //   .catch(error => console.log('Network test error:', error));
+
   return (
     <ImageBackground
       source={require('../assets/noodlesbowl_bg.webp')}
