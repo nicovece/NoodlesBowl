@@ -13,8 +13,9 @@ import {
   Send,
   SystemMessage,
 } from 'react-native-gifted-chat';
+import { db } from '../firebase';
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, db }) => {
   const { name, color, colorLabel, colorContrast } = route.params;
   const [messages, setMessages] = useState([]);
   const onSend = (newMessages) => {

@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.nicovece.NoodlesBowl",
       "simulator": true,
-      "jsEngine": "jsc",
+      "jsEngine": "hermes",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -28,7 +28,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.nicovece.NoodlesBowl",
-      "jsEngine": "jsc"
+      "jsEngine": "hermes"
     },
     "web": {
       "favicon": "./assets/favicon.png"
