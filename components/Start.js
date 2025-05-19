@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { db, app, auth } from '../firebase';
+import { signInAnonymously } from 'firebase/auth';
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -22,6 +24,46 @@ const Start = ({ navigation }) => {
   const colorOptionContrast = ['#000', '#fff', '#000', '#fff', '#000'];
   const colorLabels = ['Light', 'Yellow', 'Brown', 'Blue', 'Purple', 'Orange'];
 
+  // const signInUser = () => {
+  //   const auth = getAuth(app);
+  //   signInAnonymously(auth)
+  //     .then((result) => {
+  //       navigation.navigate('Chat', {
+  //         uid: result.user.uid,
+  //         name,
+  //         color: selectedColor,
+  //         colorLabel: selectedColorLabel,
+  //         colorContrast: selectedColorContrast,
+  //       });
+  //       Alert.alert('Signed in Successfully!');
+  //     })
+  //     .catch(() => {
+  //       Alert.alert('Unable to sign in, try later again.');
+  //     });
+  // };
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate('Chat', {
+          uid: result.user.uid,
+          name,
+          color: selectedColor,
+          colorLabel: selectedColorLabel,
+          colorContrast: selectedColorContrast,
+        });
+        Alert.alert('Signed in Successfully!');
+      })
+      .catch((error) => {
+        console.log('Sign in error:', error);
+        Alert.alert('Unable to sign in, try later again.');
+      });
+  };
+
+  // fetch('https://jsonplaceholder.typicode.com/todos/1')
+  //   .then(response => response.json())
+  //   .then(json => console.log('Network test:', json))
+  //   .catch(error => console.log('Network test error:', error));
+
   return (
     <ImageBackground
       source={require('../assets/noodlesbowl_bg.webp')}
@@ -30,45 +72,36 @@ const Start = ({ navigation }) => {
       imageStyle={{ opacity: 0.15 }}
     >
       <View
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Intro Container'
         style={styles.introContainer}
       >
         <Text
           accessibilityLabel='Title'
-          style={[
-            styles.title,
-            { color: selectedColorContrast },
-          ]}
+          style={[styles.title, { color: selectedColorContrast }]}
         >
           NoodlesBowl
         </Text>
         <Text
           accessibilityLabel='Subtitle'
-          style={[
-            styles.subtitle,
-            { color: selectedColorContrast },
-          ]}
+          style={[styles.subtitle, { color: selectedColorContrast }]}
         >
           Chat
         </Text>
         <Text
           accessibilityLabel='Tagline'
-          style={[
-            styles.tagline,
-            { color: selectedColorContrast },
-          ]}
+          style={[styles.tagline, { color: selectedColorContrast }]}
         >
           The tastiest way to connect
         </Text>
       </View>
       <View
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Body Container'
         style={styles.bodyContainer}
       >
         <View
-          accessibile={true}
+          accessible={true}
           accessibilityLabel='Text Input Container'
           style={styles.textInputContainer}
         >
@@ -116,7 +149,7 @@ const Start = ({ navigation }) => {
           </View>
         </View>
         <View
-          accessibile={true}
+          accessible={true}
           accessibilityLabel='Actions Container'
           style={styles.actionsContainer}
         >
@@ -130,17 +163,14 @@ const Start = ({ navigation }) => {
               if (missingFields.length > 0) {
                 Alert.alert(`Please provide a ${missingFields.join(' and ')}`);
               } else {
-                navigation.navigate('Chat', {
-                  name,
-                  color: selectedColor,
-                  colorLabel: selectedColorLabel,
-                  colorContrast: selectedColorContrast,
-                });
+                signInUser();
               }
             }}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? selectedColorContrast : selectedColor,
+                backgroundColor: pressed
+                  ? selectedColorContrast
+                  : selectedColor,
               },
               {
                 borderColor: selectedColor,
@@ -152,11 +182,10 @@ const Start = ({ navigation }) => {
             {({ pressed }) => (
               <Text
                 accessibilityLabel='Start Chatting Button Text'
-                // style={[styles.baseText, styles.buttonText, { color: selectedColorContrast }]}
                 style={[
                   styles.baseText,
                   styles.buttonText,
-                  { color: pressed ? selectedColor : selectedColorContrast }
+                  { color: pressed ? selectedColor : selectedColorContrast },
                 ]}
               >
                 Start Chatting

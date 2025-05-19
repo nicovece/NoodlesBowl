@@ -13,40 +13,42 @@ import {
   Send,
   SystemMessage,
 } from 'react-native-gifted-chat';
+import { addDoc, collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const Chat = ({ route, navigation }) => {
-  const { name, color, colorLabel, colorContrast } = route.params;
+  const { name, color, colorLabel, colorContrast, uid } = route.params;
   const [messages, setMessages] = useState([]);
-  const onSend = (newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
-  };
-
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer!',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: 'This is a system message!',
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
-  }, []);
 
   useEffect(() => {
     navigation.setOptions({ title: name });
+
+    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+      let newMessages = [];
+      documentsSnapshot.forEach(doc => {
+        newMessages.push({
+          _id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis())
+        })
+      })
+      setMessages(newMessages);
+      });
+    return () => {
+      if (unsubMessages) unsubMessages();
+    };
   }, []);
+
+  const onSend = async (newMessages) => {
+    try {
+      await addDoc(collection(db, "messages"), newMessages[0]);
+      console.log('Message sent to Firestore successfully!');
+    } catch (error) {
+      console.error('Error sending message to Firestore:', error);
+    }
+  };
+
 
   const renderBubble = (props) => {
     return (
@@ -99,11 +101,11 @@ const Chat = ({ route, navigation }) => {
       resizeMode='cover'
       style={[styles.backgroundMain, { backgroundColor: color }]}
       imageStyle={{ opacity: 0.25 }}
-      accessibile={true}
+      accessible={true}
       accessibilityLabel='Chat Container'
     >
       <GiftedChat
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Chat'
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
@@ -111,7 +113,8 @@ const Chat = ({ route, navigation }) => {
         renderSystemMessage={renderSystemMessage}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1,
+          _id: uid,
+          name: name,
         }}
       />
       {Platform.OS === 'android' ? (
