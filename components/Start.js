@@ -72,7 +72,7 @@ const Start = ({ navigation }) => {
       imageStyle={{ opacity: 0.15 }}
     >
       <View
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Intro Container'
         style={styles.introContainer}
       >
@@ -96,12 +96,12 @@ const Start = ({ navigation }) => {
         </Text>
       </View>
       <View
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Body Container'
         style={styles.bodyContainer}
       >
         <View
-          accessibile={true}
+          accessible={true}
           accessibilityLabel='Text Input Container'
           style={styles.textInputContainer}
         >
@@ -149,7 +149,7 @@ const Start = ({ navigation }) => {
           </View>
         </View>
         <View
-          accessibile={true}
+          accessible={true}
           accessibilityLabel='Actions Container'
           style={styles.actionsContainer}
         >

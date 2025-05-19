@@ -101,11 +101,11 @@ const Chat = ({ route, navigation }) => {
       resizeMode='cover'
       style={[styles.backgroundMain, { backgroundColor: color }]}
       imageStyle={{ opacity: 0.25 }}
-      accessibile={true}
+      accessible={true}
       accessibilityLabel='Chat Container'
     >
       <GiftedChat
-        accessibile={true}
+        accessible={true}
         accessibilityLabel='Chat'
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
