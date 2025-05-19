@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDtBRG6QvM-b1_u2NI4KHmNGVp_G6BNghU",
-  authDomain: "noodlesbowl-f7d56.firebaseapp.com",
-  projectId: "noodlesbowl-f7d56",
-  storageBucket: "noodlesbowl-f7d56.firebasestorage.app",
-  messagingSenderId: "1042412426709",
-  appId: "1:1042412426709:web:c9538c0816a18adc7b595c"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
