@@ -30,9 +30,14 @@ const Chat = ({ route, navigation, isConnected }) => {
   useEffect(() => {
     navigation.setOptions({ title: name });
 
-    if (isConnected) {
+    let unsubMessages;
+    if (isConnected === true) {
+
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+
       const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-      const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
         let newMessages = [];
         documentsSnapshot.forEach((doc) => {
           newMessages.push({
@@ -52,7 +57,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     return () => {
       if (unsubMessages) unsubMessages();
     };
-  }, []);
+  }, [isConnected]);
 
   // Cache messages to AsyncStorage
   const cachedMessages = async (newMessages) => {
