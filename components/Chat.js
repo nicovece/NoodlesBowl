@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -26,18 +26,20 @@ import { db } from '../firebase';
 const Chat = ({ route, navigation, isConnected }) => {
   const { name, color, colorLabel, colorContrast, uid } = route.params;
   const [messages, setMessages] = useState([]);
+  
+  const unsubMessages = useRef(null);
 
   useEffect(() => {
     navigation.setOptions({ title: name });
 
-    let unsubMessages;
     if (isConnected === true) {
+      // Unsubscribe from previous messages
+      if (unsubMessages.current) unsubMessages.current();
+      unsubMessages.current = null;
 
-      if (unsubMessages) unsubMessages();
-      unsubMessages = null;
-
+      // Subscribe to new messages
       const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-      unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+      unsubMessages.current = onSnapshot(q, (documentsSnapshot) => {
         let newMessages = [];
         documentsSnapshot.forEach((doc) => {
           newMessages.push({
@@ -55,7 +57,7 @@ const Chat = ({ route, navigation, isConnected }) => {
 
     // Cleanup function
     return () => {
-      if (unsubMessages) unsubMessages();
+      if (unsubMessages.current) unsubMessages.current();
     };
   }, [isConnected]);
 
