@@ -13,7 +13,14 @@ import {
   Send,
   SystemMessage,
 } from 'react-native-gifted-chat';
-import { addDoc, collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '../firebase';
 
 const Chat = ({ route, navigation, isConnected }) => {
@@ -23,32 +30,53 @@ const Chat = ({ route, navigation, isConnected }) => {
   useEffect(() => {
     navigation.setOptions({ title: name });
 
-    const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
-    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
-      let newMessages = [];
-      documentsSnapshot.forEach(doc => {
-        newMessages.push({
-          _id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis())
-        })
-      })
-      setMessages(newMessages);
+    if (isConnected) {
+      const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+      const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+        let newMessages = [];
+        documentsSnapshot.forEach((doc) => {
+          newMessages.push({
+            _id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis()),
+          });
+        });
+        cachedMessages(newMessages);
+        setMessages(newMessages);
       });
+    } else {
+      loadCachedMessages();
+    }
+
+    // Cleanup function
     return () => {
       if (unsubMessages) unsubMessages();
     };
   }, []);
 
+  // Cache messages to AsyncStorage
+  const cachedMessages = async (newMessages) => {
+    try {
+      await AsyncStorage.setItem('messages', JSON.stringify(newMessages));
+    } catch (error) {
+      console.error('Error saving messages to AsyncStorage:', error);
+    }
+  };
+
+  // Load cached messages from AsyncStorage
+  const loadCachedMessages = async () => {
+    const cachedMessages = (await AsyncStorage.getItem('messages')) || '[]';
+    setMessages(JSON.parse(cachedMessages));
+  };
+
   const onSend = async (newMessages) => {
     try {
-      await addDoc(collection(db, "messages"), newMessages[0]);
+      await addDoc(collection(db, 'messages'), newMessages[0]);
       console.log('Message sent to Firestore successfully!');
     } catch (error) {
       console.error('Error sending message to Firestore:', error);
     }
   };
-
 
   const renderBubble = (props) => {
     return (
@@ -72,12 +100,9 @@ const Chat = ({ route, navigation, isConnected }) => {
         {...props}
         containerStyle={[
           styles.systemMessageContainer,
-          { backgroundColor: color }
+          { backgroundColor: color },
         ]}
-        textStyle={[
-          styles.systemMessageText,
-          { color: colorContrast }
-        ]}
+        textStyle={[styles.systemMessageText, { color: colorContrast }]}
       />
     );
   };
