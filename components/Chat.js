@@ -16,7 +16,7 @@ import {
 import { addDoc, collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, isConnected }) => {
   const { name, color, colorLabel, colorContrast, uid } = route.params;
   const [messages, setMessages] = useState([]);
 
@@ -82,18 +82,8 @@ const Chat = ({ route, navigation }) => {
     );
   };
 
-  // const customInputToolbar = (props) => {
-  //   return (
-  //     <InputToolbar
-  //       {...props}
-  //       containerStyle={{
-  //         backgroundColor: 'white',
-  //         borderTopColor: color,
-  //         borderTopWidth: 4,
-  //       }}
-  //     />
-  //   );
-  // };
+  const conditionalInputToolbar = (props) =>
+    isConnected ? <InputToolbar {...props} /> : null;
 
   return (
     <ImageBackground
@@ -111,6 +101,7 @@ const Chat = ({ route, navigation }) => {
         messages={messages}
         renderBubble={renderBubble}
         renderSystemMessage={renderSystemMessage}
+        renderInputToolbar={conditionalInputToolbar}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: uid,

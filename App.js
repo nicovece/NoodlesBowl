@@ -10,6 +10,16 @@ import Chat from './components/Chat';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useEffect } from "react";
+import { LogBox, Alert } from "react-native";
+
+import {
+  //getFirestore,
+  disableNetwork,
+  enableNetwork,
+} from 'firebase/firestore';
+
 // Create the navigator
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +40,16 @@ const App = () => {
   // const app = initializeApp(firebaseConfig);
   // const db = getFirestore(app);
 
-  console.log(db);
+  const connectionStatus = useNetInfo();
+
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected]);
 
   return (
     <NavigationContainer>
@@ -41,10 +60,14 @@ const App = () => {
           name="Start"
           component={Start}
         />
-        <Stack.Screen
-          name="Chat"
-          component={Chat}
-        />
+        <Stack.Screen name="Chat">
+          {(props) => (
+            <Chat
+              isConnected={connectionStatus.isConnected}
+              {...props}
+            />
+          )}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
