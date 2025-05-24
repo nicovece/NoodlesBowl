@@ -18,7 +18,9 @@
       "simulator": true,
       "jsEngine": "hermes",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to let you share it in chat messages.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses your location to let you share it in chat messages."
       }
     },
     "android": {
