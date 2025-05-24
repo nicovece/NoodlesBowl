@@ -13,8 +13,6 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
       let permissions = await Location.requestForegroundPermissionsAsync();
       if (permissions?.granted) {
         const location = await Location.getCurrentPositionAsync({});
-        console.log('Location result:', location);
-        Alert.alert("Permissions granted.");
         if (location) {
           onSend([
             {
@@ -27,15 +25,13 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
               },
             }
           ]);
-          Alert.alert('user wants to get their location');
-          console.log('user wants to get their location');
+          //console.log('user wants to get their location');
         } else {
           Alert.alert("Error occurred while fetching location");
-          console.log('Location was not returned:', location);
         }
-      } else Alert.alert("Permissions haven't been granted.");
+      }
+      else Alert.alert("Permissions haven't been granted.");
     } catch (error) {
-      Alert.alert("Error fetching location: " + error.message);
       console.log('Error fetching location:', error);
     }
   };  
