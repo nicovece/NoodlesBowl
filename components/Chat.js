@@ -12,6 +12,7 @@ import {
   InputToolbar,
   Send,
   SystemMessage,
+  renderActions,
 } from 'react-native-gifted-chat';
 import {
   addDoc,
@@ -22,6 +23,7 @@ import {
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '../firebase';
+import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, isConnected }) => {
   const { name, color, colorLabel, colorContrast, uid } = route.params;
@@ -114,6 +116,10 @@ const Chat = ({ route, navigation, isConnected }) => {
     );
   };
 
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
   const conditionalInputToolbar = (props) =>
     isConnected ? <InputToolbar {...props} /> : null;
 
@@ -134,6 +140,7 @@ const Chat = ({ route, navigation, isConnected }) => {
         renderBubble={renderBubble}
         renderSystemMessage={renderSystemMessage}
         renderInputToolbar={conditionalInputToolbar}
+        renderActions={renderCustomActions}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: uid,
