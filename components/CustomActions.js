@@ -16,12 +16,15 @@ const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
         switch (buttonIndex) {
           case 0:
             console.log('user wants to pick an image');
+            pickImage();
             return;
           case 1:
             console.log('user wants to take a photo');
+            takePhoto();
             return;
           case 2:
             console.log('user wants to get their location');
+            getLocation();
           default:
         }
       },
