@@ -1,6 +1,32 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
 const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
+  const actionSheet = useActionSheet();
+  
+  const onActionPress = () => {
+    const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+    actionSheet.showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            console.log('user wants to pick an image');
+            return;
+          case 1:
+            console.log('user wants to take a photo');
+            return;
+          case 2:
+            console.log('user wants to get their location');
+          default:
+        }
+      },
+    );
+  };
 
   return (
     <TouchableOpacity style={styles.container} onPress={onActionPress}>
@@ -23,11 +49,13 @@ const styles = StyleSheet.create({
     borderColor: '#b2b2b2',
     borderWidth: 2,
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   iconText: {
     color: '#b2b2b2',
     fontWeight: 'bold',
-    fontSize: 10,
+    fontSize: 18,
     backgroundColor: 'transparent',
     textAlign: 'center',
   },
