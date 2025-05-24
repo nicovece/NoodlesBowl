@@ -1,10 +1,17 @@
-import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-// import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { ref, uploadBytes } from 'firebase/storage';
 // import * as MediaLibrary from 'expo-media-library';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
+const CustomActions = ({
+  wrapperStyle,
+  iconTextStyle,
+  onSend,
+  user,
+  storage,
+}) => {
   const actionSheet = useActionSheet();
 
   // Get location
@@ -23,22 +30,43 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
                 longitude: location.coords.longitude,
                 latitude: location.coords.latitude,
               },
-            }
+            },
           ]);
           //console.log('user wants to get their location');
         } else {
-          Alert.alert("Error occurred while fetching location");
+          Alert.alert('Error occurred while fetching location');
         }
-      }
-      else Alert.alert("Permissions haven't been granted.");
+      } else Alert.alert("Permissions haven't been granted.");
     } catch (error) {
       console.log('Error fetching location:', error);
     }
-  };  
+  };
+
+  // Pick image from library
+  const pickImage = async () => {
+    let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissions?.granted) {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.canceled) {
+        const imageURI = result.assets[0].uri;
+        const response = await fetch(imageURI);
+        const blob = await response.blob();
+        const newUploadRef = ref(storage, 'image123');
+        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+          console.log('File has been uploaded successfully');
+        });
+      } else Alert.alert("Permissions haven't been granted.");
+    }
+  };
 
   // Action sheet
   const onActionPress = () => {
-    const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
+    const options = [
+      'Choose From Library',
+      'Take Picture',
+      'Send Location',
+      'Cancel',
+    ];
     const cancelButtonIndex = options.length - 1;
     actionSheet.showActionSheetWithOptions(
       {
@@ -53,13 +81,13 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
             return;
           case 1:
             console.log('user wants to take a photo');
-            takePhoto();
+            //takePhoto();
             return;
           case 2:
             getLocation();
           default:
         }
-      },
+      }
     );
   };
 
@@ -70,7 +98,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
       </View>
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -21,7 +21,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import CustomActions from './CustomActions';
 import MapView from 'react-native-maps';
 
@@ -117,7 +117,12 @@ const Chat = ({ route, navigation, isConnected }) => {
   };
 
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} onSend={onSend} user={{ _id: uid, name: name }} />;
+    return <CustomActions 
+      {...props} 
+      onSend={onSend} 
+      user={{ _id: uid, name: name }} 
+      storage={storage}
+    />;
   };
 
   const renderCustomView = (props) => {
