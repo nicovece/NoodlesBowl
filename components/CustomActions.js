@@ -1,27 +1,43 @@
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 // import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 // import * as MediaLibrary from 'expo-media-library';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, user }) => {
   const actionSheet = useActionSheet();
 
   // Get location
   const getLocation = async () => {
-    let permissions = await Location.requestForegroundPermissionsAsync();
-    if (permissions?.granted) {
-      const location = await Location.getCurrentPositionAsync({});
-      if (location) {
-        onSend({
-          location: {
-            longitude: location.coords.longitude,
-            latitude: location.coords.latitude,
-          },
-        });
-        console.log('user wants to get their location');
-      } else Alert.alert("Error occurred while fetching location");
-    } else Alert.alert("Permissions haven't been granted.");
+    try {
+      let permissions = await Location.requestForegroundPermissionsAsync();
+      if (permissions?.granted) {
+        const location = await Location.getCurrentPositionAsync({});
+        console.log('Location result:', location);
+        Alert.alert("Permissions granted.");
+        if (location) {
+          onSend([
+            {
+              _id: Math.random().toString(36).substring(7),
+              createdAt: new Date(),
+              user: user || { _id: 1, name: 'User' },
+              location: {
+                longitude: location.coords.longitude,
+                latitude: location.coords.latitude,
+              },
+            }
+          ]);
+          Alert.alert('user wants to get their location');
+          console.log('user wants to get their location');
+        } else {
+          Alert.alert("Error occurred while fetching location");
+          console.log('Location was not returned:', location);
+        }
+      } else Alert.alert("Permissions haven't been granted.");
+    } catch (error) {
+      Alert.alert("Error fetching location: " + error.message);
+      console.log('Error fetching location:', error);
+    }
   };  
 
   // Action sheet
