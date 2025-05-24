@@ -2,7 +2,7 @@ import { TouchableOpacity, View, Text, StyleSheet, Alert } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { ref, uploadBytes } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 // import * as MediaLibrary from 'expo-media-library';
 
 const CustomActions = ({
@@ -13,6 +13,44 @@ const CustomActions = ({
   storage,
 }) => {
   const actionSheet = useActionSheet();
+
+  const generateReference = (uri) => {
+    const timeStamp = new Date().getTime();
+    const imageName = uri.split('/')[uri.split('/').length - 1];
+    return `${user._id}-${timeStamp}-${imageName}`;
+  };
+
+  // Upload and send image
+  const uploadAndSendImage = async (imageURI) => {
+    const uniqueRefString = generateReference(imageURI);
+    const newUploadRef = ref(storage, uniqueRefString);
+    const response = await fetch(imageURI);
+    const blob = await response.blob();
+    uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+      const imageURL = await getDownloadURL(snapshot.ref);
+      onSend({ image: imageURL });
+    });
+  };
+
+  // Pick image from library
+  const pickImage = async () => {
+    let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissions?.granted) {
+      let result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
+      else Alert.alert("Permissions haven't been granted.");
+    }
+  };
+
+  // Take photo
+  const takePhoto = async () => {
+    let permissions = await ImagePicker.requestCameraPermissionsAsync();
+    if (permissions?.granted) {
+      let result = await ImagePicker.launchCameraAsync();
+      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
+      else Alert.alert("Permissions haven't been granted.");
+    }
+  };
 
   // Get location
   const getLocation = async () => {
@@ -42,23 +80,6 @@ const CustomActions = ({
     }
   };
 
-  // Pick image from library
-  const pickImage = async () => {
-    let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissions?.granted) {
-      let result = await ImagePicker.launchImageLibraryAsync();
-      if (!result.canceled) {
-        const imageURI = result.assets[0].uri;
-        const response = await fetch(imageURI);
-        const blob = await response.blob();
-        const newUploadRef = ref(storage, 'image123');
-        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
-          console.log('File has been uploaded successfully');
-        });
-      } else Alert.alert("Permissions haven't been granted.");
-    }
-  };
-
   // Action sheet
   const onActionPress = () => {
     const options = [
@@ -81,7 +102,7 @@ const CustomActions = ({
             return;
           case 1:
             console.log('user wants to take a photo');
-            //takePhoto();
+            takePhoto();
             return;
           case 2:
             getLocation();
