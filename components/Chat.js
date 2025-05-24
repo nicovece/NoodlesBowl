@@ -23,6 +23,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '../firebase';
 import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 const Chat = ({ route, navigation, isConnected }) => {
   const { name, color, colorLabel, colorContrast, uid } = route.params;
@@ -119,6 +120,27 @@ const Chat = ({ route, navigation, isConnected }) => {
     return <CustomActions {...props} />;
   };
 
+  const renderCustomView = (props) => {
+    const { currentMessage} = props;
+    if (currentMessage.location) {
+      return (
+          <MapView
+            style={{width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3}}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+      );
+    }
+    return null;
+  };
+
   const conditionalInputToolbar = (props) =>
     isConnected ? <InputToolbar {...props} /> : null;
 
@@ -140,6 +162,7 @@ const Chat = ({ route, navigation, isConnected }) => {
         renderSystemMessage={renderSystemMessage}
         renderInputToolbar={conditionalInputToolbar}
         renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: uid,
