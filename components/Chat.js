@@ -117,7 +117,7 @@ const Chat = ({ route, navigation, isConnected }) => {
   };
 
   const renderCustomActions = (props) => {
-    return <CustomActions {...props} onSend={onSend} />;
+    return <CustomActions {...props} onSend={onSend} user={{ _id: uid, name: name }} />;
   };
 
   const renderCustomView = (props) => {
