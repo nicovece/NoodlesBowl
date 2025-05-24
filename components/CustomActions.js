@@ -16,6 +16,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
             latitude: location.coords.latitude,
           },
         });
+        console.log('user wants to get their location');
       } else Alert.alert("Error occurred while fetching location");
     } else Alert.alert("Permissions haven't been granted.");
   };  
@@ -40,7 +41,6 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
             takePhoto();
             return;
           case 2:
-            console.log('user wants to get their location');
             getLocation();
           default:
         }
