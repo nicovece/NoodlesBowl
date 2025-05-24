@@ -12,7 +12,6 @@ import {
   InputToolbar,
   Send,
   SystemMessage,
-  renderActions,
 } from 'react-native-gifted-chat';
 import {
   addDoc,
