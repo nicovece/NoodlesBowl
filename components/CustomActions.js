@@ -1,9 +1,26 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
   const actionSheet = useActionSheet();
-  
+
+  // Get location
+  const getLocation = async () => {
+    let permissions = await Location.requestForegroundPermissionsAsync();
+    if (permissions?.granted) {
+      const location = await Location.getCurrentPositionAsync({});
+      if (location) {
+        onSend({
+          location: {
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          },
+        });
+      } else Alert.alert("Error occurred while fetching location");
+    } else Alert.alert("Permissions haven't been granted.");
+  };  
+
+  // Action sheet
   const onActionPress = () => {
     const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
     const cancelButtonIndex = options.length - 1;
