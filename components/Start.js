@@ -15,13 +15,21 @@ import {
 import { db, app, auth } from '../firebase';
 import { signInAnonymously } from 'firebase/auth';
 
+// Start.js - Entry screen for NoodlesBowl chat app. Handles user input for name and background color, and signs in anonymously.
 const Start = ({ navigation }) => {
+  // State for storing the user's name
   const [name, setName] = useState('');
+  // State for the selected background color
   const [selectedColor, setSelectedColor] = useState('#F1E420');
+  // State for the contrast color (for text visibility)
   const [selectedColorContrast, setSelectedColorContrast] = useState('#000');
+  // State for the color label (for accessibility)
   const [selectedColorLabel, setSelectedColorLabel] = useState();
+  // Available color options for background
   const colorOptions = ['#F1E420', '#302E06', '#2097F1', '#7B20F1', '#F17B20'];
+  // Corresponding contrast colors for each background color
   const colorOptionContrast = ['#000', '#fff', '#000', '#fff', '#000'];
+  // Labels for each color option (for accessibility)
   const colorLabels = ['Light', 'Yellow', 'Brown', 'Blue', 'Purple', 'Orange'];
 
   // const signInUser = () => {
@@ -41,6 +49,7 @@ const Start = ({ navigation }) => {
   //       Alert.alert('Unable to sign in, try later again.');
   //     });
   // };
+  // Signs in the user anonymously and navigates to the Chat screen
   const signInUser = () => {
     signInAnonymously(auth)
       .then((result) => {
@@ -105,11 +114,13 @@ const Start = ({ navigation }) => {
           accessibilityLabel='Text Input Container'
           style={styles.textInputContainer}
         >
+          {/* Icon for the text input */}
           <Image
             source={require('../assets/input_icon.png')}
             style={styles.textInputBackground}
             accessible={false}
           />
+          {/* Text input for username */}
           <TextInput
             accessibilityLabel='Username Text Input'
             style={[styles.textInput, styles.baseText]}
@@ -118,6 +129,7 @@ const Start = ({ navigation }) => {
             placeholder='Type your username here'
           />
         </View>
+        {/* Color picker section */}
         <View style={styles.colorPickerContainer}>
           <Text
             accessibilityLabel='Color Picker Label'
@@ -126,6 +138,7 @@ const Start = ({ navigation }) => {
             Choose Background Color:
           </Text>
           <View accessibilityLabel='Color Picker' style={styles.colorPicker}>
+            {/* Render color options as selectable circles */}
             {colorOptions.map((color, index) => (
               <TouchableOpacity
                 accessibilityLabel={`Color Option ${colorLabels[index]}`}
@@ -150,6 +163,7 @@ const Start = ({ navigation }) => {
             ))}
           </View>
         </View>
+        {/* Start Chatting button with validation for required fields */}
         <View
           accessible={true}
           accessibilityLabel='Actions Container'
@@ -197,6 +211,7 @@ const Start = ({ navigation }) => {
           </Pressable>
         </View>
       </View>
+      {/* KeyboardAvoidingView for iOS to prevent keyboard from covering input */}
       {Platform.OS === 'ios' ? (
         <KeyboardAvoidingView behavior='padding' />
       ) : null}

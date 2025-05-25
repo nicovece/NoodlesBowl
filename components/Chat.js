@@ -25,21 +25,25 @@ import { db, storage } from '../firebase';
 import CustomActions from './CustomActions';
 import MapView from 'react-native-maps';
 
+// Chat.js - Main chat screen for NoodlesBowl. Handles message display, sending, and media/location sharing.
 const Chat = ({ route, navigation, isConnected }) => {
+  // Destructure navigation params for user and color info
   const { name, color, colorLabel, colorContrast, uid } = route.params;
+  // State for chat messages
   const [messages, setMessages] = useState([]);
-  
+  // Ref to store unsubscribe function for Firestore listener
   const unsubMessages = useRef(null);
 
   useEffect(() => {
+    // Set the navigation title to the user's name
     navigation.setOptions({ title: name });
 
     if (isConnected === true) {
-      // Unsubscribe from previous messages
+      // Unsubscribe from previous Firestore listener if any
       if (unsubMessages.current) unsubMessages.current();
       unsubMessages.current = null;
 
-      // Subscribe to new messages
+      // Subscribe to Firestore messages collection, ordered by creation time
       const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
       unsubMessages.current = onSnapshot(q, (documentsSnapshot) => {
         let newMessages = [];
@@ -54,16 +58,17 @@ const Chat = ({ route, navigation, isConnected }) => {
         setMessages(newMessages);
       });
     } else {
+      // If offline, load cached messages from AsyncStorage
       loadCachedMessages();
     }
 
-    // Cleanup function
+    // Cleanup Firestore listener on unmount
     return () => {
       if (unsubMessages.current) unsubMessages.current();
     };
   }, [isConnected]);
 
-  // Cache messages to AsyncStorage
+  // Save messages to AsyncStorage for offline use
   const cachedMessages = async (newMessages) => {
     try {
       await AsyncStorage.setItem('messages', JSON.stringify(newMessages));
@@ -78,6 +83,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     setMessages(JSON.parse(cachedMessages));
   };
 
+  // Send a new message to Firestore
   const onSend = async (newMessages) => {
     try {
       await addDoc(collection(db, 'messages'), newMessages[0]);
@@ -87,6 +93,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     }
   };
 
+  // Custom bubble renderer for chat messages
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -103,6 +110,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     );
   };
 
+  // Custom renderer for system messages (e.g., notifications)
   const renderSystemMessage = (props) => {
     return (
       <SystemMessage
@@ -116,6 +124,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     );
   };
 
+  // Custom actions renderer for media/location sharing
   const renderCustomActions = (props) => {
     return <CustomActions 
       {...props} 
@@ -125,6 +134,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     />;
   };
 
+  // Custom view renderer for displaying maps if message contains location
   const renderCustomView = (props) => {
     const { currentMessage} = props;
     if (currentMessage.location) {
@@ -148,6 +158,7 @@ const Chat = ({ route, navigation, isConnected }) => {
     return null;
   };
 
+  // Only show input toolbar if online
   const conditionalInputToolbar = (props) =>
     isConnected ? <InputToolbar {...props} /> : null;
 
@@ -176,6 +187,7 @@ const Chat = ({ route, navigation, isConnected }) => {
           name: name,
         }}
       />
+      {/* KeyboardAvoidingView for Android to prevent keyboard from covering input */}
       {Platform.OS === 'android' ? (
         <KeyboardAvoidingView behavior='height' />
       ) : null}

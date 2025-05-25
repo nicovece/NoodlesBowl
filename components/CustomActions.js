@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 // import * as MediaLibrary from 'expo-media-library';
 
+// CustomActions.js - Provides custom actions for chat: pick image, take photo, or share location.
 const CustomActions = ({
   wrapperStyle,
   iconTextStyle,
@@ -12,14 +13,17 @@ const CustomActions = ({
   user,
   storage,
 }) => {
+  // Get the ActionSheet context
   const actionSheet = useActionSheet();
 
+  // Generate a unique reference string for image uploads
   const generateReference = (uri) => {
     const timeStamp = new Date().getTime();
     const imageName = uri.split('/')[uri.split('/').length - 1];
     return `${user._id}-${timeStamp}-${imageName}`;
   };
 
+  // Upload image to Firebase Storage and send as a chat message
   const uploadAndSendImage = async (imageURI) => {
     try {
       const response = await fetch(imageURI);
@@ -45,6 +49,7 @@ const CustomActions = ({
     }
   };
 
+  // Pick an image from the device's media library
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissions?.granted) {
@@ -54,7 +59,7 @@ const CustomActions = ({
     }
   };
 
-  // Take photo
+  // Take a photo using the device's camera
   const takePhoto = async () => {
     let permissions = await ImagePicker.requestCameraPermissionsAsync();
     if (permissions?.granted) {
@@ -64,7 +69,7 @@ const CustomActions = ({
     }
   };
 
-  // Get location
+  // Get the user's current location and send as a chat message
   const getLocation = async () => {
     try {
       let permissions = await Location.requestForegroundPermissionsAsync();
@@ -92,7 +97,7 @@ const CustomActions = ({
     }
   };
 
-  // Action sheet
+  // Show the action sheet with options for media/location
   const onActionPress = () => {
     const options = [
       'Choose From Library',
@@ -124,6 +129,7 @@ const CustomActions = ({
     );
   };
 
+  // Render the custom action button (+) for the chat input
   return (
     <TouchableOpacity
       style={styles.container}
