@@ -20,19 +20,31 @@ const CustomActions = ({
     return `${user._id}-${timeStamp}-${imageName}`;
   };
 
-  // Upload and send image
   const uploadAndSendImage = async (imageURI) => {
-    const uniqueRefString = generateReference(imageURI);
-    const newUploadRef = ref(storage, uniqueRefString);
-    const response = await fetch(imageURI);
-    const blob = await response.blob();
-    uploadBytes(newUploadRef, blob).then(async (snapshot) => {
-      const imageURL = await getDownloadURL(snapshot.ref);
-      onSend({ image: imageURL });
-    });
+    try {
+      const response = await fetch(imageURI);
+      const blob = await response.blob();
+      const uniqueRefString = generateReference(imageURI);
+      const newUploadRef = ref(storage, uniqueRefString);
+      await uploadBytes(newUploadRef, blob);
+      const downloadURL = await getDownloadURL(newUploadRef);
+        uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+        const imageURL = await getDownloadURL(snapshot.ref);
+        console.log('Image uploaded successfully', imageURL);
+        onSend([
+          {
+            _id: Math.random().toString(36).substring(7),
+            createdAt: new Date(),
+            user: user || { _id: 1, name: 'User' },
+            image: imageURL,
+          },
+        ]);
+      });
+    } catch (error) {
+      Alert.alert('Image upload failed', error.message);
+    }
   };
 
-  // Pick image from library
   const pickImage = async () => {
     let permissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissions?.granted) {
@@ -44,12 +56,15 @@ const CustomActions = ({
 
   // Take photo
   const takePhoto = async () => {
-    let permissions = await ImagePicker.requestCameraPermissionsAsync();
-    if (permissions?.granted) {
-      let result = await ImagePicker.launchCameraAsync();
-      if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
-      else Alert.alert("Permissions haven't been granted.");
-    }
+    // Example usage:
+    // let permissions = await ImagePicker.requestCameraPermissionsAsync();
+    // if (permissions?.granted) {
+    //   let result = await ImagePicker.launchCameraAsync();
+    //   if (!result.canceled) {
+    //     const imageURI = result.assets[0].uri;
+    //     await uploadAndSendImage(imageURI);
+    //   }
+    // }
   };
 
   // Get location
