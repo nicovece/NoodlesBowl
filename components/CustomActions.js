@@ -125,9 +125,20 @@ const CustomActions = ({
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onActionPress}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onActionPress}
+      accessible={true}
+      accessibilityLabel="Open actions menu. Tap to choose from sending an image, taking a photo, or sharing your location."
+      accessibilityRole="button"
+    >
       <View style={[styles.wrapper, wrapperStyle]}>
-        <Text style={[styles.iconText, iconTextStyle]}>+</Text>
+        <Text style={[styles.iconText, iconTextStyle]}
+          accessibilityElementsHidden={true}
+          importantForAccessibility="no"
+        >
+          +
+        </Text>
       </View>
     </TouchableOpacity>
   );

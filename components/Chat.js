@@ -140,6 +140,8 @@ const Chat = ({ route, navigation, isConnected }) => {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
+            accessible={true}
+            accessibilityLabel={`Shared location map${currentMessage.user && currentMessage.user.name ? ' from ' + currentMessage.user.name : ''}`}
           />
       );
     }
@@ -156,11 +158,11 @@ const Chat = ({ route, navigation, isConnected }) => {
       style={[styles.backgroundMain, { backgroundColor: color }]}
       imageStyle={{ opacity: 0.25 }}
       accessible={true}
-      accessibilityLabel='Chat Container'
+      accessibilityLabel='Chat background image'
     >
       <GiftedChat
         accessible={true}
-        accessibilityLabel='Chat'
+        accessibilityLabel='Chat area. Double tap a message to hear its content. Use the plus button to send media or location.'
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
         renderBubble={renderBubble}

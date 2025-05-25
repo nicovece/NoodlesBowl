@@ -108,6 +108,7 @@ const Start = ({ navigation }) => {
           <Image
             source={require('../assets/input_icon.png')}
             style={styles.textInputBackground}
+            accessible={false}
           />
           <TextInput
             accessibilityLabel='Username Text Input'
@@ -144,6 +145,7 @@ const Start = ({ navigation }) => {
                   setSelectedColorLabel(colorLabels[index]);
                   setSelectedColorContrast(colorOptionContrast[index]);
                 }}
+                accessibilityState={{ selected: selectedColor === color }}
               ></TouchableOpacity>
             ))}
           </View>
@@ -155,6 +157,7 @@ const Start = ({ navigation }) => {
         >
           <Pressable
             accessibilityLabel='Start Chatting Button'
+            accessibilityRole='button'
             onPress={() => {
               const missingFields = [];
               if (!name) missingFields.push('username');
