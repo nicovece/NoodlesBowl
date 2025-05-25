@@ -16,12 +16,6 @@ A modern, cross-platform chat application built with React Native, Expo, and Fir
 
 ---
 
-## Screenshots
-
-_Add screenshots of the Start and Chat screens here if desired._
-
----
-
 ## Tech Stack
 
 - **React Native** (with Expo)
