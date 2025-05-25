@@ -21,7 +21,9 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 const Chat = ({ route, navigation, isConnected }) => {
   const { name, color, colorLabel, colorContrast, uid } = route.params;
@@ -114,6 +116,38 @@ const Chat = ({ route, navigation, isConnected }) => {
     );
   };
 
+  const renderCustomActions = (props) => {
+    return <CustomActions 
+      {...props} 
+      onSend={onSend} 
+      user={{ _id: uid, name: name }} 
+      storage={storage}
+    />;
+  };
+
+  const renderCustomView = (props) => {
+    const { currentMessage} = props;
+    if (currentMessage.location) {
+      return (
+          <MapView
+            style={{width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3}}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            accessible={true}
+            accessibilityLabel={`Shared location map${currentMessage.user && currentMessage.user.name ? ' from ' + currentMessage.user.name : ''}`}
+          />
+      );
+    }
+    return null;
+  };
+
   const conditionalInputToolbar = (props) =>
     isConnected ? <InputToolbar {...props} /> : null;
 
@@ -124,16 +158,18 @@ const Chat = ({ route, navigation, isConnected }) => {
       style={[styles.backgroundMain, { backgroundColor: color }]}
       imageStyle={{ opacity: 0.25 }}
       accessible={true}
-      accessibilityLabel='Chat Container'
+      accessibilityLabel='Chat background image'
     >
       <GiftedChat
         accessible={true}
-        accessibilityLabel='Chat'
+        accessibilityLabel='Chat area. Double tap a message to hear its content. Use the plus button to send media or location.'
         style={[styles.container, { backgroundColor: color }]}
         messages={messages}
         renderBubble={renderBubble}
         renderSystemMessage={renderSystemMessage}
         renderInputToolbar={conditionalInputToolbar}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: uid,

@@ -24,7 +24,7 @@ import {
 const Stack = createNativeStackNavigator();
 
 // Import your firebase config
-import { db } from './firebase';
+  import { db } from './firebase';
 
 const App = () => {
   // const firebaseConfig = {
