@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import Constants from "expo-constants";
 import { getStorage } from "firebase/storage";
 
-const firebaseConfig = Constants.expoConfig?.extra?.firebase;
+const firebaseConfig = Constants.expoConfig.extra.firebase;
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);

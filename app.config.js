@@ -1,4 +1,6 @@
-{
+import 'dotenv/config';
+
+export default {
   "expo": {
     "name": "NoodlesBowl",
     "slug": "NoodlesBowl",
@@ -21,6 +23,9 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSLocationWhenInUseUsageDescription": "This app uses your location to let you share it in chat messages.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses your location to let you share it in chat messages."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -41,12 +46,12 @@
         "projectId": "784ddaba-08a1-490e-8756-45992a05df08"
       },
       "firebase": {
-        "apiKey": "AIzaSyDtBRG6QvM-b1_u2NI4KHmNGVp_G6BNghU",
-        "authDomain": "noodlesbowl-f7d56.firebaseapp.com",
-        "projectId": "noodlesbowl-f7d56",
-        "storageBucket": "noodlesbowl-f7d56.firebasestorage.app",
-        "messagingSenderId": "1042412426709",
-        "appId": "1:1042412426709:web:c9538c0816a18adc7b595c"
+        "apiKey": process.env.FIREBASE_API_KEY,
+        "authDomain": process.env.FIREBASE_AUTH_DOMAIN,
+        "projectId": process.env.FIREBASE_PROJECT_ID,
+        "storageBucket": process.env.FIREBASE_STORAGE_BUCKET,
+        "messagingSenderId": process.env.FIREBASE_MESSAGING_SENDER_ID,
+        "appId": process.env.FIREBASE_APP_ID
       }
     }
   }

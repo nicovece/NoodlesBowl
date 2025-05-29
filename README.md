@@ -50,18 +50,17 @@ A modern, cross-platform chat application built with React Native, Expo, and Fir
    yarn install
    ```
 3. Set up Firebase:
-   - The app uses Firebase configuration from `app.json` under `expo.extra.firebase`.
-   - To use your own Firebase project, update these values in `app.json`:
-     ```json
-     "firebase": {
-       "apiKey": "...",
-       "authDomain": "...",
-       "projectId": "...",
-       "storageBucket": "...",
-       "messagingSenderId": "...",
-       "appId": "..."
-     }
+   - The app uses Firebase configuration from `app.config.js` under `expo.extra.firebase`.
+   - To use your own Firebase project, create a `.env` file in the project root with the following variables:
+     ```env
+     FIREBASE_API_KEY=your-api-key
+     FIREBASE_AUTH_DOMAIN=your-auth-domain
+     FIREBASE_PROJECT_ID=your-project-id
+     FIREBASE_STORAGE_BUCKET=your-storage-bucket
+     FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+     FIREBASE_APP_ID=your-app-id
      ```
+   - These will be automatically injected into the app at build time via `app.config.js`.
 
 ### Running the App
 
@@ -102,7 +101,7 @@ NoodlesBowl/
 │   ├── Chat.js           # Chat screen (main chat UI)
 │   └── CustomActions.js  # Custom actions for media/location
 ├── assets/               # Images, icons, backgrounds
-├── app.json              # Expo & Firebase config
+├── app.config.js         # Expo & Firebase config (uses .env)
 ├── package.json          # Dependencies & scripts
 ├── metro.config.js       # Metro bundler config
 ├── eas.json              # EAS build config
@@ -114,8 +113,8 @@ NoodlesBowl/
 ## Configuration
 
 - **Firebase:**
-  - All Firebase credentials are managed via `app.json` under `expo.extra.firebase`.
-  - No credentials are hardcoded in the source files.
+  - All Firebase credentials are managed via `app.config.js` under `expo.extra.firebase`.
+  - The `.env` file is used for local development and build-time secrets. **Do not commit this file to version control.**
 - **Environment Variables:**
   - For custom environments, use `.env` files (see `.gitignore`).
 
